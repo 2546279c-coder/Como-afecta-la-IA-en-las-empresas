@@ -1,0 +1,1483 @@
+!DOCTYPE html>
+<html lang="es" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma Interactiva: IA en la Empresa y Eval de Prompts | Aris Ivan Miranda Zumaya</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        brand: {
+                            teal: '#0D9488',
+                            cyan: '#06B6D4',
+                            indigo: '#6366F1',
+                            amber: '#F59E0B',
+                            emerald: '#10B981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Styles & Animations -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-heading {
+            font-family: 'Montserrat', sans-serif;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0D9488;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06B6D4;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .light .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        .glow-teal {
+            box-shadow: 0 0 25px -5px rgba(13, 148, 136, 0.3);
+        }
+        .glow-indigo {
+            box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 transition-colors duration-300 min-h-screen flex flex-col selection:bg-teal-500 selection:text-white">
+
+    <!-- NAVIGATION BAR (FULL WIDTH BORDERLESS) -->
+    <header class="sticky top-0 z-50 w-full bg-slate-950/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 transition-all">
+        <div class="w-full px-4 sm:px-8 lg:px-12 flex items-center justify-between h-16">
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg glow-teal">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div>
+                    <span class="font-heading font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-300 to-indigo-400 text-lg sm:text-xl block leading-tight">
+                        IA & PROMPT ENG
+                    </span>
+                    <span class="text-xs text-slate-400 hidden sm:block">Plataforma de Investigación Evaluativa</span>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+                <div class="relative w-full">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="globalSearchInput" onkeyup="handleGlobalSearch()" placeholder="Buscar en la investigación, prompts o términos..." 
+                        class="w-full bg-slate-900/90 border border-slate-700/60 rounded-full py-1.5 pl-9 pr-4 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-teal-500 transition-all placeholder-slate-500">
+                </div>
+            </div>
+
+            <!-- Nav Links & Actions -->
+            <nav class="flex items-center space-x-2 sm:space-x-6 text-xs sm:text-sm font-medium">
+                <a href="#resumen" class="hover:text-teal-400 transition-colors hidden xl:block">Resumen</a>
+                <a href="#investigacion" class="hover:text-teal-400 transition-colors">Investigación</a>
+                <a href="#transposicion" class="hover:text-teal-400 transition-colors hidden lg:block">Transposición</a>
+                <a href="#bitacora" class="hover:text-teal-400 transition-colors">Prompts Log</a>
+                <a href="#evaluador" class="bg-teal-600 hover:bg-teal-500 text-white px-3 py-1.5 rounded-lg transition-all shadow-md font-semibold flex items-center space-x-1">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span class="hidden sm:inline">Evaluador</span>
+                </a>
+
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 transition-colors border border-slate-800" title="Cambiar Tema">
+                    <i class="fa-solid fa-moon dark:hidden text-amber-400"></i>
+                    <i class="fa-solid fa-sun hidden dark:block text-amber-300"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION (BORDERLESS FULL WIDTH FLUID) -->
+    <section class="relative w-full py-16 lg:py-24 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800/60 overflow-hidden">
+        <!-- Background Ambient Glows -->
+        <div class="absolute top-1/4 left-10 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="w-full px-4 sm:px-8 lg:px-12 xl:px-16 max-w-[1800px] mx-auto relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Hero Content -->
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="inline-flex items-center space-x-2 bg-teal-950/60 border border-teal-500/30 text-teal-300 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">
+                        <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
+                        <span>Evaluación de Unidad Académica</span>
+                    </div>
+
+                    <h1 class="font-heading text-3xl sm:text-5xl xl:text-6xl font-black text-white leading-tight">
+                        Transformación de la IA en la Empresa, <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-300 to-indigo-400">Transposición Didáctica</span> & Evaluación de Prompts
+                    </h1>
+
+                    <p class="text-slate-300 text-sm sm:text-base xl:text-lg leading-relaxed max-w-3xl">
+                        Plataforma de investigación profunda, realista y sin especulación teórica sobre la integración de la IA en los flujos de negocio, su impacto laboral, mecanismos financieros, transposiciones didácticas e ingeniería instruccional.
+                    </p>
+
+                    <!-- Student Metadata Badge Box -->
+                    <div class="p-4 sm:p-5 rounded-2xl glass-card border-l-4 border-l-teal-500 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
+                        <div>
+                            <span class="text-slate-400 block uppercase tracking-wider font-semibold text-[10px]">Estudiante / Autor</span>
+                            <span class="font-bold text-slate-100 text-sm sm:text-base">Aris Ivan Miranda Zumaya</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block uppercase tracking-wider font-semibold text-[10px]">Producto Entregable</span>
+                            <span class="font-semibold text-teal-300">Material para Evaluación de Unidad</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block uppercase tracking-wider font-semibold text-[10px]">Materia / Unidad</span>
+                            <span class="font-semibold text-indigo-300">Ingeniería de Prompt y Sistemas de IA</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 flex flex-wrap gap-4">
+                        <a href="#investigacion" class="px-6 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-500 hover:to-teal-400 text-white font-bold text-sm shadow-lg glow-teal transition-all flex items-center space-x-2">
+                            <span>Explorar Investigación</span>
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </a>
+                        <a href="#evaluador" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-sm transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-terminal text-teal-400"></i>
+                            <span>Probar Evaluador de Prompts</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hero Floating Stats / KPI Widgets -->
+                <div class="lg:col-span-4 grid grid-cols-2 gap-4">
+                    <div class="p-5 rounded-2xl glass-card border border-teal-500/20 hover:border-teal-500/50 transition-all text-center">
+                        <div class="text-teal-400 text-2xl font-black font-heading mb-1">+35%</div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Eficiencia Dev</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Aceleración en ciclos de software</p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl glass-card border border-indigo-500/20 hover:border-indigo-500/50 transition-all text-center">
+                        <div class="text-indigo-400 text-2xl font-black font-heading mb-1">60%</div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Resolución N1/N2</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Agentes de soporte autónomos</p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl glass-card border border-amber-500/20 hover:border-amber-500/50 transition-all text-center">
+                        <div class="text-amber-400 text-2xl font-black font-heading mb-1">8.9 / 10</div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Score Prompts</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Promedio de completitud ingenieril</p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl glass-card border border-emerald-500/20 hover:border-emerald-500/50 transition-all text-center">
+                        <div class="text-emerald-400 text-2xl font-black font-heading mb-1">100%</div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Integralidad</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Contenido completo sintetizado</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 1: RESUMEN EJECUTIVO INTERACTIVO -->
+    <section id="resumen" class="w-full py-16 bg-slate-900/60 border-b border-slate-800/80">
+        <div class="w-full px-4 sm:px-8 lg:px-12 xl:px-16 max-w-[1800px] mx-auto">
+            <div class="flex items-center space-x-3 mb-8">
+                <span class="p-2.5 rounded-xl bg-teal-500/10 text-teal-400 text-xl"><i class="fa-solid fa-chart-pie"></i></span>
+                <div>
+                    <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-white">1. Resumen Ejecutivo Sintético</h2>
+                    <p class="text-xs sm:text-sm text-slate-400">Síntesis estratégica de los hallazgos de investigación y evaluación</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Main Executive Summary Text -->
+                <div class="lg:col-span-2 space-y-4 text-slate-300 text-sm leading-relaxed">
+                    <p class="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
+                        La integración de la inteligencia artificial en el entorno empresarial ha superado la etapa de fascinación inicial para consolidarse como una <strong class="text-teal-300">reestructuración operativa directa sobre el margen EBITDA</strong>. El retorno financiero no proviene del uso individual de herramientas aisladas, sino de la orquestación de flujos de trabajo agénticos respaldados por arquitecturas RAG y gobernanza de datos.
+                    </p>
+                    <p>
+                        A nivel laboral, aproximadamente el 25% de las ocupaciones muestran alta exposición a la IA, experimentando una reconfiguración hacia la supervisión humana (*Human-in-the-Loop*). Al mismo tiempo, surgen severos desafíos técnicos como el *Shadow AI*, la *deuda de datos* y los costos de inferencia a escala.
+                    </p>
+
+                    <!-- Collapsible Key Findings Toggle -->
+                    <div class="pt-2">
+                        <button onclick="toggleAccordion('summaryAccordion')" class="w-full p-4 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-left font-semibold text-teal-300 flex items-center justify-between transition-colors border border-slate-700/50">
+                            <span class="flex items-center space-x-2">
+                                <i class="fa-solid fa-lightbulb"></i>
+                                <span>Ver los 4 Pilares Clave de la Investigación</span>
+                            </span>
+                            <i id="summaryAccordionIcon" class="fa-solid fa-chevron-down transition-transform"></i>
+                        </button>
+
+                        <div id="summaryAccordion" class="hidden mt-3 p-5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-3 text-xs sm:text-sm text-slate-300">
+                            <div class="flex items-start space-x-3">
+                                <span class="text-teal-400 font-bold mt-0.5">1.</span>
+                                <p><strong class="text-slate-100">Captura de ROI:</strong> El valor se concentra en soporte N1/N2, automatización de documentos no estructurados, mantenimiento predictivo y recomendación omnicanal.</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="text-teal-400 font-bold mt-0.5">2.</span>
+                                <p><strong class="text-slate-100">Transición Laboral:</strong> Extinción de tareas repetitivas (*Data Entry*) y surgimiento de perfiles híbridos con alta *AI Literacy* e ingeniería de prompts.</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="text-teal-400 font-bold mt-0.5">3.</span>
+                                <p><strong class="text-slate-100">Doble Filo Estratégico:</strong> La inacción provoca obsolescencia por compresión de márgenes, pero la adopción ciega genera costos de inferencia descontrolados y *Pioneer Tax*.</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="text-teal-400 font-bold mt-0.5">4.</span>
+                                <p><strong class="text-slate-100">Visión a 10 Años:</strong> Transición hacia redes agénticas autónomas, startups 'unicornio de 10 personas' y fin del esquema tradicional de cobro SaaS por usuario.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Executive Highlights Card -->
+                <div class="p-6 rounded-2xl glass-card border border-teal-500/30 flex flex-col justify-between space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-teal-400 block mb-2">Evaluación Metodológica</span>
+                        <h3 class="text-lg font-bold text-white font-heading">Calidad de Ingeniería de Prompt</h3>
+                        <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                            La secuencia de 12 prompts emitidos por el estudiante <strong class="text-slate-200">Aris Ivan Miranda Zumaya</strong> registró un promedio general de <strong class="text-amber-400">8.9/10</strong> en completitud e intencionalidad ingenieril.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-400">Asertividad Promedio:</span>
+                            <span class="font-bold text-teal-400">92%</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div class="bg-teal-400 h-2 rounded-full" style="width: 92%"></div>
+                        </div>
+
+                        <div class="flex justify-between items-center text-xs pt-1">
+                            <span class="text-slate-400">Restricciones Anti-Alucinación:</span>
+                            <span class="font-bold text-indigo-400">100% Presentes</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div class="bg-indigo-400 h-2 rounded-full" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <a href="#bitacora" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-teal-300 text-xs text-center font-bold rounded-xl transition-all border border-slate-700">
+                        Ver Bitácora de 12 Prompts
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: INVESTIGACIÓN PROFUNDA -->
+    <section id="investigacion" class="w-full py-16 bg-slate-950 border-b border-slate-800">
+        <div class="w-full px-4 sm:px-8 lg:px-12 xl:px-16 max-w-[1800px] mx-auto space-y-16">
+            
+            <!-- Section Header -->
+            <div class="flex items-center space-x-3">
+                <span class="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 text-xl"><i class="fa-solid fa-microscope"></i></span>
+                <div>
+                    <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-white">2. Investigación Profunda: IA en la Empresa</h2>
+                    <p class="text-xs sm:text-sm text-slate-400">Análisis realista, empírico e integral sin especulación teórica</p>
+                </div>
+            </div>
+
+            <!-- 2.1 ROI Y MADUREZ SECTORIAL -->
+            <div class="space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-white font-heading">2.1 Captura de ROI Real y Madurez por Sector</h3>
+                        <p class="text-xs text-slate-400">Filtra por industria para analizar casos de uso, madurez y principales obstáculos</p>
+                    </div>
+
+                    <!-- Sector Filter Buttons -->
+                    <div class="flex flex-wrap gap-2" id="sectorFilterContainer">
+                        <button onclick="filterSector('all')" class="sector-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-600 text-white transition-all">Todos</button>
+                        <button onclick="filterSector('banca')" class="sector-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 transition-all border border-slate-800">Banca/Finanzas</button>
+                        <button onclick="filterSector('retail')" class="sector-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 transition-all border border-slate-800">Retail/E-Commerce</button>
+                        <button onclick="filterSector('salud')" class="sector-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 transition-all border border-slate-800">Salud</button>
+                        <button onclick="filterSector('manufactura')" class="sector-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 transition-all border border-slate-800">Manufactura</button>
+                        <button onclick="filterSector('legales')" class="sector-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 transition-all border border-slate-800">Legales/BPO</button>
+                    </div>
+                </div>
+
+                <!-- Sector Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sectorCardsGrid">
+                    <!-- Banca Card -->
+                    <div class="sector-card banca p-6 rounded-2xl glass-card border border-slate-800 hover:border-teal-500/40 transition-all space-y-4">
+                        <div class="flex justify-between items-start">
+                            <span class="p-2 rounded-lg bg-blue-500/10 text-blue-400 text-lg"><i class="fa-solid fa-building-columns"></i></span>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-300">Madurez: ALTA</span>
+                        </div>
+                        <h4 class="font-bold text-slate-100 text-base">Banca y Servicios Financieros</h4>
+                        <div class="space-y-2 text-xs text-slate-300">
+                            <p><strong class="text-teal-400">Casos de Alto Impacto:</strong> Detección de fraude en tiempo real, scoring crediticio alternativo, análisis automatizado de riesgos.</p>
+                            <p><strong class="text-rose-400">Obstáculo Principal:</strong> Regulaciones estrictas de privacidad y sistemas informáticos heredados (*legacy*).</p>
+                        </div>
+                    </div>
+
+                    <!-- Retail Card -->
+                    <div class="sector-card retail p-6 rounded-2xl glass-card border border-slate-800 hover:border-teal-500/40 transition-all space-y-4">
+                        <div class="flex justify-between items-start">
+                            <span class="p-2 rounded-lg bg-teal-500/10 text-teal-400 text-lg"><i class="fa-solid fa-cart-shopping"></i></span>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-300">Madurez: ALTA</span>
+                        </div>
+                        <h4 class="font-bold text-slate-100 text-base">Retail y Commerce</h4>
+                        <div class="space-y-2 text-xs text-slate-300">
+                            <p><strong class="text-teal-400">Casos de Alto Impacto:</strong> Precios dinámicos, gestión predictiva de inventarios, recomendación omnicanal hiperpersonalizada.</p>
+                            <p><strong class="text-rose-400">Obstáculo Principal:</strong> Fragmentación de datos de clientes e inconsistencia en puntos de venta.</p>
+                        </div>
+                    </div>
+
+                    <!-- Salud Card -->
+                    <div class="sector-card salud p-6 rounded-2xl glass-card border border-slate-800 hover:border-teal-500/40 transition-all space-y-4">
+                        <div class="flex justify-between items-start">
+                            <span class="p-2 rounded-lg bg-rose-500/10 text-rose-400 text-lg"><i class="fa-solid fa-user-doctor"></i></span>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-amber-500/20 text-amber-300">Madurez: MEDIA</span>
+                        </div>
+                        <h4 class="font-bold text-slate-100 text-base">Salud y Farmacéutica</h4>
+                        <div class="space-y-2 text-xs text-slate-300">
+                            <p><strong class="text-teal-400">Casos de Alto Impacto:</strong> Triaje clínico asistido, optimización de ensayos clínicos, descubrimiento acelerado de moléculas.</p>
+                            <p><strong class="text-rose-400">Obstáculo Principal:</strong> Aprobaciones regulatorias complejas y responsabilidad civil legal.</p>
+                        </div>
+                    </div>
+
+                    <!-- Manufactura Card -->
+                    <div class="sector-card manufactura p-6 rounded-2xl glass-card border border-slate-800 hover:border-teal-500/40 transition-all space-y-4">
+                        <div class="flex justify-between items-start">
+                            <span class="p-2 rounded-lg bg-amber-500/10 text-amber-400 text-lg"><i class="fa-solid fa-industry"></i></span>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-300">Madurez: MED-ALTA</span>
+                        </div>
+                        <h4 class="font-bold text-slate-100 text-base">Manufactura y Logística</h4>
+                        <div class="space-y-2 text-xs text-slate-300">
+                            <p><strong class="text-teal-400">Casos de Alto Impacto:</strong> Mantenimiento predictivo de maquinaria, control de calidad por visión artificial, rutas dinámicas.</p>
+                            <p><strong class="text-rose-400">Obstáculo Principal:</strong> Cobertura e integración de sensores IoT e infraestructura física.</p>
+                        </div>
+                    </div>
+
+                    <!-- Legales Card -->
+                    <div class="sector-card legales p-6 rounded-2xl glass-card border border-slate-800 hover:border-teal-500/40 transition-all space-y-4">
+                        <div class="flex justify-between items-start">
+                            <span class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 text-lg"><i class="fa-solid fa-scale-balanced"></i></span>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-cyan-500/20 text-cyan-300">Madurez: MUY ALTA</span>
+                        </div>
+                        <h4 class="font-bold text-slate-100 text-base">Servicios Profesionales / BPO</h4>
+                        <div class="space-y-2 text-xs text-slate-300">
+                            <p><strong class="text-teal-400">Casos de Alto Impacto:</strong> Análisis contractual masivo, auditoría automatizada, soporte BPO de Nivel 1 y 2.</p>
+                            <p><strong class="text-rose-400">Obstáculo Principal:</strong> Riesgo de alucinaciones y necesidad estricta de supervisión (*Human-in-the-Loop*).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.2 IMPACTO EN EL ÁMBITO LABORAL -->
+            <div class="space-y-6 pt-6">
+                <div class="border-b border-slate-800 pb-4">
+                    <h3 class="text-xl font-bold text-white font-heading">2.2 Reestructuración del Ámbito Laboral y Competencias</h3>
+                    <p class="text-xs text-slate-400">Evolución de puestos, roles en riesgo, ocupaciones emergentes y matriz de habilidades</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <!-- Chart Doughnut Labor Exposure -->
+                    <div class="lg:col-span-5 p-6 rounded-2xl glass-card border border-slate-800 space-y-4">
+                        <h4 class="text-sm font-bold text-slate-200 text-center font-heading">Exposición Ocupacional Global a la IA (OIT/WEF)</h4>
+                        <div class="relative h-64 w-full">
+                            <canvas id="laborChart"></canvas>
+                        </div>
+                        <p class="text-[11px] text-slate-400 text-center">Un 25% de empleos globales tienen alta exposición; la mayoría vivirá transformación antes que eliminación directiva.</p>
+                    </div>
+
+                    <!-- Detailed Labor Categories Tabs -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <!-- Tab Selector -->
+                        <div class="flex border-b border-slate-800 space-x-2 text-xs font-semibold">
+                            <button onclick="switchLaborTab('evolucion')" id="laborTab-evolucion" class="py-2 px-3 text-teal-400 border-b-2 border-teal-400 transition-all">Trabajos en Evolución</button>
+                            <button onclick="switchLaborTab('riesgo')" id="laborTab-riesgo" class="py-2 px-3 text-slate-400 hover:text-slate-200 transition-all">Trabajos en Riesgo</button>
+                            <button onclick="switchLaborTab('emergentes')" id="laborTab-emergentes" class="py-2 px-3 text-slate-400 hover:text-slate-200 transition-all">Nuevos Empleos</button>
+                            <button onclick="switchLaborTab('habilidades')" id="laborTab-habilidades" class="py-2 px-3 text-slate-400 hover:text-slate-200 transition-all">Habilidades Clave</button>
+                        </div>
+
+                        <!-- Tab Content Boxes -->
+                        <div id="laborContentBox" class="p-5 rounded-xl bg-slate-900/90 border border-slate-800 min-h-[220px] text-xs sm:text-sm text-slate-300">
+                            <!-- Dynamic JS content injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.3 MECANISMOS FINANCIEROS Y ROI -->
+            <div class="space-y-6 pt-6">
+                <div class="border-b border-slate-800 pb-4">
+                    <h3 class="text-xl font-bold text-white font-heading">2.3 Mecanismos Financieros: Ahorro, Productividad e Ingresos</h3>
+                    <p class="text-xs text-slate-400">Cómo la IA impacta directamente en las líneas del estado de resultados corporativo</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Financial Mechanics Breakdown Grid -->
+                    <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="p-5 rounded-2xl glass-card border border-teal-500/30 space-y-3">
+                            <div class="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-sm"><i class="fa-solid fa-piggy-bank"></i></div>
+                            <h4 class="font-bold text-slate-100 text-sm">1. Ahorro Directo</h4>
+                            <ul class="text-xs text-slate-400 space-y-2 list-disc list-inside">
+                                <li>Reducción del costo por ticket BPO de \$8 a <\$0.50.</li>
+                                <li>Lectura automática de facturas y contratos en back-office.</li>
+                                <li>Mantenimiento predictivo industrial (-25% fallas).</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-5 rounded-2xl glass-card border border-indigo-500/30 space-y-3">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm"><i class="fa-solid fa-bolt"></i></div>
+                            <h4 class="font-bold text-slate-100 text-sm">2. Productividad</h4>
+                            <ul class="text-xs text-slate-400 space-y-2 list-disc list-inside">
+                                <li>Aceleración de desarrollo de software (+20%-35%).</li>
+                                <li>Compresión de auditorías complejas de días a minutos.</li>
+                                <li>Escalabilidad no lineal (crecer sin duplicar nómina).</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-5 rounded-2xl glass-card border border-amber-500/20 space-y-3">
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm"><i class="fa-solid fa-chart-line"></i></div>
+                            <h4 class="font-bold text-slate-100 text-sm">3. Nuevos Ingresos</h4>
+                            <ul class="text-xs text-slate-400 space-y-2 list-disc list-inside">
+                                <li>Hiperpersonalización e-commerce (+10-15% conversión).</li>
+                                <li>Scoring B2B acelerado de ventas.</li>
+                                <li>Monetización de productos nativos con IA.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Financial Chart -->
+                    <div class="lg:col-span-5 p-6 rounded-2xl glass-card border border-slate-800">
+                        <h4 class="text-sm font-bold text-slate-200 text-center font-heading mb-4">Impacto Financiero Promedio por Mecanismo (%)</h4>
+                        <div class="relative h-60 w-full">
+                            <canvas id="financialChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.4 AUTOMATIZACIÓN DE PROCESOS -->
+            <div class="space-y-6 pt-6">
+                <div class="border-b border-slate-800 pb-4">
+                    <h3 class="text-xl font-bold text-white font-heading">2.4 Automatización de Procesos: Antes vs. Hoy con IA</h3>
+                    <p class="text-xs text-slate-400">Comparativa directa de la transformación en la ejecución de flujos de trabajo</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Case 1 -->
+                    <div class="p-5 rounded-2xl glass-card border border-slate-800 space-y-4">
+                        <div class="flex items-center space-x-2 text-teal-400 font-bold text-sm">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                            <span>Aprobación de Créditos / Pólizas</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-rose-950/30 border border-rose-500/20 text-xs text-slate-300">
+                            <span class="text-rose-400 font-bold block mb-1">ANTES (Tradicional):</span>
+                            Recopilación manual, revisión por analista, verificación de buró. Toma de <strong class="text-slate-100">días o semanas</strong>.
+                        </div>
+                        <div class="p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-xs text-slate-300">
+                            <span class="text-emerald-400 font-bold block mb-1">HOY (con IA):</span>
+                            Extracción por OCR/IA, validación de riesgo en tiempo real y respuesta en <strong class="text-slate-100">minutos</strong>.
+                        </div>
+                    </div>
+
+                    <!-- Case 2 -->
+                    <div class="p-5 rounded-2xl glass-card border border-slate-800 space-y-4">
+                        <div class="flex items-center space-x-2 text-indigo-400 font-bold text-sm">
+                            <i class="fa-solid fa-bulltarget"></i>
+                            <span>Campañas de Marketing</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-rose-950/30 border border-rose-500/20 text-xs text-slate-300">
+                            <span class="text-rose-400 font-bold block mb-1">ANTES (Tradicional):</span>
+                            Redacción, diseño, pruebas A/B manuales y segmentación rígida de semanas.
+                        </div>
+                        <div class="p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-xs text-slate-300">
+                            <span class="text-emerald-400 font-bold block mb-1">HOY (con IA):</span>
+                            Generación dinámica de contenidos personalizados según el usuario en <strong class="text-slate-100">horas o minutos</strong>.
+                        </div>
+                    </div>
+
+                    <!-- Case 3 -->
+                    <div class="p-5 rounded-2xl glass-card border border-slate-800 space-y-4">
+                        <div class="flex items-center space-x-2 text-amber-400 font-bold text-sm">
+                            <i class="fa-solid fa-car-burst"></i>
+                            <span>Reclamación de Seguros</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-rose-950/30 border border-rose-500/20 text-xs text-slate-300">
+                            <span class="text-rose-400 font-bold block mb-1">ANTES (Tradicional):</span>
+                            Inspección física del ajustador, llenado manual de actas e investigación pesada.
+                        </div>
+                        <div class="p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-xs text-slate-300">
+                            <span class="text-emerald-400 font-bold block mb-1">HOY (con IA):</span>
+                            Fotos subidas por el cliente, valuación por visión artificial y desembolso en <strong class="text-slate-100">horas</strong>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.5 OPORTUNIDADES REALES VS MODAS -->
+            <div class="space-y-6 pt-6">
+                <div class="border-b border-slate-800 pb-4">
+                    <h3 class="text-xl font-bold text-white font-heading">2.5 Oportunidades Reales vs. Modas Efímeras (*Hype*)</h3>
+                    <p class="text-xs text-slate-400">Evaluación de defendibilidad estratégica (*Moats*) y viabilidad de modelos de negocio</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Real Opportunities -->
+                    <div class="p-6 rounded-2xl glass-card border border-emerald-500/30 space-y-4">
+                        <div class="flex items-center space-x-2 text-emerald-400 font-bold text-base">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Oportunidades Reales de Alto Crecimiento</span>
+                        </div>
+
+                        <div class="space-y-3 text-xs text-slate-300">
+                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="font-bold text-emerald-300 block">1. Integración Agéntica B2B:</span>
+                                Conectar IA a sistemas legados (SAP, Salesforce). Alta defendibilidad por conocimiento técnico y del negocio.
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="font-bold text-emerald-300 block">2. IA Vertical para Sectores Regulados:</span>
+                                Plataformas entrenadas para derecho, contabilidad o medicina. Foso defensivo por datos propietarios y normativa.
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="font-bold text-emerald-300 block">3. Ciberseguridad, Privacidad y Gobernanza de IA:</span>
+                                Auditoría de modelos, prevención de *prompt injection* y cumplimiento regulatorio estricto.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modas / Hype -->
+                    <div class="p-6 rounded-2xl glass-card border border-rose-500/30 space-y-4">
+                        <div class="flex items-center space-x-2 text-rose-400 font-bold text-base">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span>Modas y Modelos en Riesgo (*Hype*)</span>
+                        </div>
+
+                        <div class="space-y-3 text-xs text-slate-300">
+                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="font-bold text-rose-300 block">1. Envoltorios de API (*API Wrappers*):</span>
+                                Herramientas de función única ("creador de CVs", "generador de PDFs"). Sin foso defensivo; vulnerables a actualizaciones de OpenAI o Google.
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="font-bold text-rose-300 block">2. Agencias de Contenido Masivo Sintético:</span>
+                                Generación automática de blogs/redes sin criterio humano. Penalizado por buscadores y saturado por baja calidad.
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="font-bold text-rose-300 block">3. Venta de Prompts Estáticos e Infoproductos Básicos:</span>
+                                Librerías fijas de instrucciones que quedan obsoletas conforme las interfaces se vuelven más intuitivas.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.6 Y 2.7 RIESGOS, INACCIÓN Y VULNERABILIDADES -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-6">
+                <!-- 2.6 Inacción vs Adopción Estratégica -->
+                <div class="p-6 rounded-2xl glass-card border border-slate-800 space-y-4">
+                    <h3 class="text-lg font-bold text-white font-heading border-b border-slate-800 pb-3">2.6 Inacción vs. Adopción Estratégica</h3>
+                    <div class="space-y-3 text-xs text-slate-300">
+                        <div class="p-3 rounded-xl bg-rose-950/20 border border-rose-500/20">
+                            <strong class="text-rose-400 block mb-1"><i class="fa-solid fa-circle-xmark mr-1"></i>Desventajas de NO Adoptar:</strong>
+                            Compresión de márgenes EBITDA por competidores eficientes, pérdida de velocidad comercial (*Time-to-Market*), desaprovechamiento del efecto bola de nieve (*Flywheel*) de datos y fuga de talento joven.
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-950/20 border border-emerald-500/20">
+                            <strong class="text-emerald-400 block mb-1"><i class="fa-solid fa-circle-check mr-1"></i>Ventajas de Postergar (Retraso Consciente):</strong>
+                            Evitar el 'Impuesto al Pionero' (*Pioneer Tax*), menor exposición inicial a multas regulatorias y tiempo para ordenar la arquitectura de datos antes de instalar capas de IA.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2.7 Riesgos Técnicos y Operativos -->
+                <div class="p-6 rounded-2xl glass-card border border-slate-800 space-y-4">
+                    <h3 class="text-lg font-bold text-white font-heading border-b border-slate-800 pb-3">2.7 Vulnerabilidades Técnicas y Operativas</h3>
+                    <div class="space-y-2 text-xs text-slate-300">
+                        <p><strong class="text-amber-400">1. Shadow AI:</strong> Empleados introduciendo código propietario o estados financieros en modelos públicos.</p>
+                        <p><strong class="text-amber-400">2. Alucinaciones:</strong> Errores probabilísticos con apariencia de certeza en soporte o consejos legales.</p>
+                        <p><strong class="text-amber-400">3. Prompt Injection:</strong> Ataques donde texto oculto manipula las instrucciones del agente autónomo.</p>
+                        <p><strong class="text-amber-400">4. Costos de Inferencia:</strong> Escalación no lineal descontrolada en el costo de llamadas a APIs a gran escala.</p>
+                        <p><strong class="text-amber-400">5. Deuda de Datos:</strong> Intentar aplicar IA sobre bases de datos desordenadas o fragmentadas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.8 PROSPECTIVA A 5-10 AÑOS -->
+            <div class="p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/50 border border-indigo-500/30 space-y-6 pt-6">
+                <div class="flex items-center space-x-3">
+                    <span class="p-2 rounded-lg bg-indigo-500/20 text-indigo-400 text-lg"><i class="fa-solid fa-crystal-ball"></i></span>
+                    <div>
+                        <h3 class="text-lg font-bold text-white font-heading">2.8 Visión Prospectiva del Entorno Empresarial (2030-2035)</h3>
+                        <p class="text-xs text-slate-400">La transición de la IA Generativa hacia la Inteligencia Agéntica Autónoma</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs text-slate-300">
+                    <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
+                        <strong class="text-indigo-300 block mb-1">Redes de Multi-Agentes:</strong>
+                        Transición de copilotos asistidos a agentes que toman decisiones, negocian entre sí y ejecutan proyectos completos.
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
+                        <strong class="text-teal-300 block mb-1">Unicornios de 10 Personas:</strong>
+                        Startups que alcanzarán valoraciones multimillonarias operando con plantillas hiper-esbeltas.
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
+                        <strong class="text-amber-300 block mb-1">Fin del SaaS por Asiento:</strong>
+                        Evolución hacia el cobro por resultado o 'Labor Digital' entregada en lugar de licencias por usuario.
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
+                        <strong class="text-emerald-300 block mb-1">IA Física y Energía:</strong>
+                        Integración masiva en robótica industrial y tensiones por la capacidad energética de los datacenters.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 3: TRANSPOSICIÓN DIDÁCTICA -->
+    <section id="transposicion" class="w-full py-16 bg-slate-900/40 border-b border-slate-800">
+        <div class="w-full px-4 sm:px-8 lg:px-12 xl:px-16 max-w-[1800px] mx-auto space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <span class="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 text-xl"><i class="fa-solid fa-graduation-cap"></i></span>
+                    <div>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-white">3. Transposición Didáctica y Niveles de Explicación</h2>
+                        <p class="text-xs sm:text-sm text-slate-400">Mismo núcleo conceptual adaptado a dos audiencias y niveles cognitivos distintos</p>
+                    </div>
+                </div>
+
+                <!-- Switcher Buttons -->
+                <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+                    <button onclick="switchDidactic('licenciatura')" id="btn-licenciatura" class="px-4 py-2 rounded-lg bg-teal-600 text-white transition-all shadow-md">
+                        Nivel Licenciatura (CINE 6 UNESCO)
+                    </button>
+                    <button onclick="switchDidactic('ninos')" id="btn-ninos" class="px-4 py-2 rounded-lg text-slate-400 hover:text-slate-200 transition-all">
+                        Nivel Educación Básica (10 Años)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area for Transposition -->
+            <div id="didacticContentArea" class="p-8 rounded-3xl glass-card border border-teal-500/30 transition-all">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: BITÁCORA DE PROMPTS EVALUADA -->
+    <section id="bitacora" class="w-full py-16 bg-slate-950 border-b border-slate-800">
+        <div class="w-full px-4 sm:px-8 lg:px-12 xl:px-16 max-w-[1800px] mx-auto space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <span class="p-2.5 rounded-xl bg-teal-500/10 text-teal-400 text-xl"><i class="fa-solid fa-list-check"></i></span>
+                    <div>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-white">4. Bitácora de Prompts Evaluada (12 Prompts)</h2>
+                        <p class="text-xs sm:text-sm text-slate-400">Registro histórico de las instrucciones emitidas por Aris Ivan Miranda Zumaya con evaluación heurística</p>
+                    </div>
+                </div>
+
+                <!-- Filter Prompts by Category -->
+                <div class="flex flex-wrap gap-2 text-xs font-semibold" id="promptFilterContainer">
+                    <button onclick="filterPrompts('all')" class="prompt-filter-btn px-3 py-1.5 rounded-lg bg-teal-600 text-white transition-all">Todos (12)</button>
+                    <button onclick="filterPrompts('investigacion')" class="prompt-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 transition-all">Investigación</button>
+                    <button onclick="filterPrompts('estrategia')" class="prompt-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 transition-all">Estrategia</button>
+                    <button onclick="filterPrompts('didactica')" class="prompt-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 transition-all">Didáctica</button>
+                    <button onclick="filterPrompts('meta')" class="prompt-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 transition-all">Meta-Prompt Maestro</button>
+                </div>
+            </div>
+
+            <!-- Prompts Grid Container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="promptsGrid">
+                <!-- Rendered dynamically by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: EVALUADOR INTERACTIVO DE PROMPTS EN TIEMPO REAL -->
+    <section id="evaluador" class="w-full py-16 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800">
+        <div class="w-full px-4 sm:px-8 lg:px-12 xl:px-16 max-w-[1800px] mx-auto space-y-8">
+            <div class="flex items-center space-x-3">
+                <span class="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 text-xl"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                <div>
+                    <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-white">5. Evaluador de Prompts en Tiempo Real</h2>
+                    <p class="text-xs sm:text-sm text-slate-400">Prueba cualquier prompt y recibe un diagnóstico heurístico instantáneo sobre mejores prácticas ingenieriles</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Input Area -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="p-6 rounded-2xl glass-card border border-slate-800 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <label for="userPromptInput" class="text-sm font-bold text-slate-200 flex items-center space-x-2">
+                                <i class="fa-solid fa-code text-teal-400"></i>
+                                <span>Escribe o pega tu prompt a evaluar:</span>
+                            </label>
+
+                            <div class="flex space-x-2">
+                                <button onclick="loadSamplePrompt('high')" class="text-[11px] px-2.5 py-1 rounded-lg bg-teal-950/60 text-teal-300 border border-teal-500/30 hover:bg-teal-900 transition-all">Cargar Ej. Sobresaliente</button>
+                                <button onclick="loadSamplePrompt('low')" class="text-[11px] px-2.5 py-1 rounded-lg bg-rose-950/60 text-rose-300 border border-rose-500/30 hover:bg-rose-900 transition-all">Cargar Ej. Débil</button>
+                            </div>
+                        </div>
+
+                        <textarea id="userPromptInput" oninput="evaluateUserPrompt()" rows="6" placeholder="Ejemplo: Hazte pasar por un experto en ciberseguridad y evalúa los riesgos de Shadow AI en empresas financieras. Da recomendaciones en una tabla sin usar rollo teórico..." 
+                            class="w-full p-4 rounded-xl bg-slate-950 border border-slate-700/80 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-teal-500 transition-all placeholder-slate-600 resize-y font-mono"></textarea>
+
+                        <div class="flex justify-between items-center text-xs text-slate-400">
+                            <span>Caracteres: <strong id="charCountText" class="text-slate-200">0</strong></span>
+                            <span>Palabras: <strong id="wordCountText" class="text-slate-200">0</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Diagnostics Result Panel -->
+                <div class="lg:col-span-5 p-6 rounded-2xl glass-card border border-teal-500/30 space-y-6">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                        <h3 class="text-sm font-bold text-slate-200 font-heading">Diagnóstico Heurístico</h3>
+                        <div class="text-right">
+                            <span id="scoreBadge" class="text-2xl font-black font-heading text-teal-400">0.0 / 10</span>
+                            <span id="scoreLabel" class="block text-[10px] uppercase font-bold text-slate-400">Sin datos</span>
+                        </div>
+                    </div>
+
+                    <!-- Checklist Indicators -->
+                    <div class="space-y-3 text-xs">
+                        <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800" id="check-role">
+                            <span class="text-slate-300 flex items-center space-x-2">
+                                <i class="fa-solid fa-user-gear text-slate-500"></i>
+                                <span>Asignación de Rol / Persona</span>
+                            </span>
+                            <span class="font-bold text-slate-500 status-tag">No detectado</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800" id="check-context">
+                            <span class="text-slate-300 flex items-center space-x-2">
+                                <i class="fa-solid fa-compass text-slate-500"></i>
+                                <span>Contexto & Delimitación</span>
+                            </span>
+                            <span class="font-bold text-slate-500 status-tag">No detectado</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800" id="check-constraint">
+                            <span class="text-slate-300 flex items-center space-x-2">
+                                <i class="fa-solid fa-shield-halved text-slate-500"></i>
+                                <span>Restricciones / Anti-Alucinación</span>
+                            </span>
+                            <span class="font-bold text-slate-500 status-tag">No detectado</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800" id="check-format">
+                            <span class="text-slate-300 flex items-center space-x-2">
+                                <i class="fa-solid fa-table-cells text-slate-500"></i>
+                                <span>Instrucción de Formato / Salida</span>
+                            </span>
+                            <span class="font-bold text-slate-500 status-tag">No detectado</span>
+                        </div>
+                    </div>
+
+                    <!-- Actionable Improvement Suggestions -->
+                    <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+                        <span class="text-xs font-bold text-amber-400 flex items-center space-x-1">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span>Sugerencias de Mejora:</span>
+                        </span>
+                        <ul id="suggestionsList" class="text-[11px] text-slate-400 space-y-1 list-disc list-inside">
+                            <li>Escribe una instrucción en el cuadro para comenzar la evaluación.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: BIBLIOGRAFÍA Y REFERENCIAS (APA 2020) -->
+    <section id="bibliografia" class="w-full py-16 bg-slate-950">
+        <div class="w-full px-4 sm:px-8 lg:px-12 xl:px-16 max-w-[1800px] mx-auto space-y-8">
+            <div class="flex items-center space-x-3">
+                <span class="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 text-xl"><i class="fa-solid fa-book-bookmark"></i></span>
+                <div>
+                    <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-white">6. Bibliografía y Referencias (Formato APA 7ª Edición / 2020)</h2>
+                    <p class="text-xs sm:text-sm text-slate-400">Fuentes primarias y secundarias consultadas para el desarrollo de la investigación</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="biblioContainer">
+                <!-- Dynamically Injected by JS with Copy Buttons -->
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="w-full bg-slate-950 border-t border-slate-800/80 py-8 text-center text-xs text-slate-500">
+        <div class="w-full px-4 sm:px-8 max-w-[1800px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <p class="text-slate-400 font-semibold">Aris Ivan Miranda Zumaya © 2026</p>
+                <p class="text-[11px] text-slate-600">Material para evaluación de unidad "Ingeniería de Prompt" | GitHub Pages Ready</p>
+            </div>
+            <div class="flex items-center space-x-4 text-slate-400">
+                <a href="#resumen" class="hover:text-teal-400 transition-colors">Volver arriba <i class="fa-solid fa-arrow-up ml-1"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Box -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-teal-600 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 text-xs font-semibold">
+        <i class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toastMessage">¡Cita copiada al portapapeles!</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & INTERACTIVITY -->
+    <script>
+        /* -------------------------------------------------------------
+         * DATA STRUCTURES
+         * ------------------------------------------------------------- */
+        const promptsData = [
+            {
+                id: 1,
+                prompt: "Hazte pasar por el mejor experto en IA y estrategia de negocios y hazme una investigación súper profunda, sincera y realista sobre cómo la inteligencia artificial está transformando a las empresas hoy en día, sin inventar datos ni usar rollo teórico vacío",
+                assertiveness: "Alta. Establece asignación de rol experta explícita y define un tono realista.",
+                completeness: "Media-Alta. Incluye restricción anti-alucinación ('sin inventar datos').",
+                score: 8.5,
+                category: "investigacion",
+                technique: "Role Prompting / Anti-Hallucination"
+            },
+            {
+                id: 2,
+                prompt: "¿Cómo se está reflejando el uso de la inteligencia artificial en el ámbito laboral? Explica qué trabajos están cambiando, cuáles podrían desaparecer, cuáles están surgiendo y qué nuevas habilidades están empezando a necesitar los trabajadores. Usa ejemplos reales y datos comprobables.",
+                assertiveness: "Sobresaliente. Desglosa sub-preguntas específicas del ecosistema laboral.",
+                completeness: "Alta. Exige delimitación empírica explícita ('ejemplos reales y datos').",
+                score: 9.0,
+                category: "investigacion",
+                technique: "Multi-question / Grounding Request"
+            },
+            {
+                id: 3,
+                prompt: "¿Cómo está ayudando realmente la inteligencia artificial a las empresas a ahorrar dinero, aumentar su productividad o generar más ingresos?",
+                assertiveness: "Alta. Enfoca la consulta en las tres variables financieras directas del negocio.",
+                completeness: "Media. Pregunta de orientación analítica abierta.",
+                score: 8.0,
+                category: "estrategia",
+                technique: "Variable-Focused Analysis"
+            },
+            {
+                id: 4,
+                prompt: "¿Cómo está cambiando la inteligencia artificial la forma en que funcionan las empresas? Explica qué procesos están siendo automatizados",
+                assertiveness: "Alta. Dirige la atención al plano operativo de automatización de flujos.",
+                completeness: "Media. Específica en temática pero sin restricciones de formato.",
+                score: 8.0,
+                category: "estrategia",
+                technique: "Domain Process Inquiry"
+            },
+            {
+                id: 5,
+                prompt: "¿Qué nuevos negocios y oportunidades están apareciendo gracias a la inteligencia artificial? Analiza cuáles tienen posibilidades reales de crecer y cuáles podrían ser simplemente una moda.",
+                assertiveness: "Sobresaliente. Introduce una perspectiva crítica (oportunidades reales vs hype).",
+                completeness: "Alta. Estímulo para categorización estratégica y diferenciación.",
+                score: 9.0,
+                category: "estrategia",
+                technique: "Critical Comparative Analysis"
+            },
+            {
+                id: 6,
+                prompt: "¿Qué puede pasar con las empresas que no incorporen inteligencia artificial mientras sus competidores sí lo hacen? Explica las posibles ventajas y desventajas",
+                assertiveness: "Sobresaliente. Fuerza un análisis contrafáctico e imparcial (ventajas de no adoptar).",
+                completeness: "Alta. Excelente diseño para evitar sesgos de confirmación.",
+                score: 9.2,
+                category: "estrategia",
+                technique: "Counterfactual & Balanced Prompting"
+            },
+            {
+                id: 7,
+                prompt: "¿Cuáles son los principales problemas y riesgos que las empresas están encontrando al utilizar inteligencia artificial?",
+                assertiveness: "Alta. Enfocada en la identificación de vulnerabilidades técnicas y operativas.",
+                completeness: "Media-Alta. Diagnóstico directo de riesgos corporativos.",
+                score: 8.5,
+                category: "investigacion",
+                technique: "Risk Identification Inquiry"
+            },
+            {
+                id: 8,
+                prompt: "¿Cómo podría cambiar el mundo empresarial durante los próximos 5 a 10 años debido a la inteligencia artificial?",
+                assertiveness: "Muy Alta. Establece marco temporal prospectivo (5 a 10 años).",
+                completeness: "Alta. Delimita la proyección al sector corporativo.",
+                score: 8.8,
+                category: "investigacion",
+                technique: "Temporal Horizon Boundary"
+            },
+            {
+                id: 9,
+                prompt: "Realiza un resumen ejecutivo, bien estructurado, y abarcando todo lo que te pregunte",
+                assertiveness: "Excelente. Solicita síntesis holística de la interacción previa.",
+                completeness: "Alta. Incorpora modificador de formato ('resumen ejecutivo') y alcance global.",
+                score: 9.0,
+                category: "meta",
+                technique: "Holistic Synthesis / Format Modifier"
+            },
+            {
+                id: 10,
+                prompt: "hazme una explicación académica de educación superior, como licenciatura",
+                assertiveness: "Excelente. Especifica registro lingüístico e institucional (licenciatura).",
+                completeness: "Alta. Modificador de tono y profundidad para transposición didáctica.",
+                score: 9.0,
+                category: "didactica",
+                technique: "Persona / Audience Persona Styling"
+            },
+            {
+                id: 11,
+                prompt: "Haz una explicación como si tuviera 10 años, explicándome todo el tema con claridad",
+                assertiveness: "Sobresaliente. Aplica el principio de simplificación Feynman con audiencia infantil.",
+                completeness: "Alta. Instrucción clara de tono, lenguaje sencillo y analogías.",
+                score: 9.2,
+                category: "didactica",
+                technique: "Feynman Technique / Simplified Persona"
+            },
+            {
+                id: 12,
+                prompt: "Genera un PDF que sume TODO lo vertido en este chat... [Prompt Maestro Completo]",
+                assertiveness: "Sobresaliente / Perfecta. Prompt maestro multifacético con especificaciones de portada, resumen, investigación, bitácora y bibliografía APA 2020.",
+                completeness: "Sobresaliente (10/10). Máximo nivel de especificidad, estructura y restricciones.",
+                score: 10.0,
+                category: "meta",
+                technique: "Multi-Constraint Master Output"
+            }
+        ];
+
+        const bibliografiaData = [
+            {
+                autor: "Anthropic",
+                anio: "2024",
+                titulo: "Prompt engineering interactive tutorial and enterprise guidelines",
+                fuente: "Anthropic Documentation",
+                url: "https://docs.anthropic.com/"
+            },
+            {
+                autor: "Davenport, T. H., & Mittal, N.",
+                anio: "2023",
+                titulo: "All-in on AI: How smart companies win big with artificial intelligence",
+                fuente: "Harvard Business Review Press"
+            },
+            {
+                autor: "Gartner",
+                anio: "2024",
+                titulo: "Top strategic technology trends for 2024: Generative AI and autonomous agents",
+                fuente: "Gartner Research"
+            },
+            {
+                autor: "Organización Internacional del Trabajo [OIT]",
+                anio: "2023",
+                titulo: "Generative AI and jobs: A global analysis of potential effects on job quantity and quality (Working Paper No. 96)",
+                fuente: "OIT Publicaciones"
+            },
+            {
+                autor: "McKinsey & Company",
+                anio: "2024",
+                titulo: "The state of AI in 2024: Generative AI's break-out year and ROI benchmarks",
+                fuente: "McKinsey Global Institute"
+            },
+            {
+                autor: "OpenAI",
+                anio: "2024",
+                titulo: "GPT-4 system card and prompt engineering best practices",
+                fuente: "OpenAI Technical Reports",
+                url: "https://openai.com/research"
+            },
+            {
+                autor: "UNESCO",
+                anio: "2011",
+                titulo: "Clasificación Internacional Normalizada de la Educación: CINE 2011",
+                fuente: "Instituto de Estadística de la UNESCO"
+            },
+            {
+                autor: "World Economic Forum [WEF]",
+                anio: "2025",
+                titulo: "The future of jobs report 2025",
+                fuente: "World Economic Forum"
+            }
+        ];
+
+        /* -------------------------------------------------------------
+         * INITIALIZATION & RENDERERS
+         * ------------------------------------------------------------- */
+        window.onload = function() {
+            renderPromptsGrid(promptsData);
+            renderLaborTab('evolucion');
+            renderDidactic('licenciatura');
+            renderBibliography();
+            initCharts();
+        };
+
+        // Theme Toggle
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        // Accordion Toggle
+        function toggleAccordion(id) {
+            const accordion = document.getElementById(id);
+            const icon = document.getElementById(id + 'Icon');
+            accordion.classList.toggle('hidden');
+            if(icon) icon.classList.toggle('rotate-180');
+        }
+
+        // Sector Filter logic
+        function filterSector(sector) {
+            const cards = document.querySelectorAll('.sector-card');
+            const buttons = document.querySelectorAll('.sector-btn');
+
+            buttons.forEach(btn => btn.className = 'sector-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 transition-all border border-slate-800');
+            event.target.className = 'sector-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-600 text-white transition-all';
+
+            cards.forEach(card => {
+                if (sector === 'all' || card.classList.contains(sector)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Labor Tab Switching Logic
+        function switchLaborTab(tabKey) {
+            const tabs = ['evolucion', 'riesgo', 'emergentes', 'habilidades'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`laborTab-${t}`);
+                if(btn) btn.className = 'py-2 px-3 text-slate-400 hover:text-slate-200 transition-all';
+            });
+            const activeBtn = document.getElementById(`laborTab-${tabKey}`);
+            if(activeBtn) activeBtn.className = 'py-2 px-3 text-teal-400 border-b-2 border-teal-400 transition-all font-bold';
+
+            renderLaborTab(tabKey);
+        }
+
+        function renderLaborTab(key) {
+            const box = document.getElementById('laborContentBox');
+            let content = '';
+
+            if (key === 'evolucion') {
+                content = `
+                    <h5 class="font-bold text-teal-400 mb-2 text-sm">Trabajos en Evolución (Rediseño de Funciones)</h5>
+                    <p class="mb-3">La IA actúa como copiloto. Los profesionales migran de la ejecución manual a la supervisión estratégica:</p>
+                    <ul class="space-y-2 list-disc list-inside text-slate-300">
+                        <li><strong>Programadores:</strong> Asistentes escriben código repetitivo; los ingenieros se enfocan en arquitectura y seguridad.</li>
+                        <li><strong>Médicos y Radiólogos:</strong> Visión por computadora detecta anomalías; el médico se centra en diagnóstico integral y empatía.</li>
+                        <li><strong>Analistas Financieros:</strong> Conciliación automatizada; el valor reside en análisis predictivo y asesoría estratégicas.</li>
+                    </ul>`;
+            } else if (key === 'riesgo') {
+                content = `
+                    <h5 class="font-bold text-rose-400 mb-2 text-sm">Trabajos en Riesgo Directo (Automatización Repetitiva)</h5>
+                    <p class="mb-3">Puestos basados en la recolección o procesamiento repetitivo de datos no estructurados:</p>
+                    <ul class="space-y-2 list-disc list-inside text-slate-300">
+                        <li><strong>Entrada de Datos (Data Entry):</strong> Procesamiento automático de documentos elimina la captura manual.</li>
+                        <li><strong>Soporte Nivel 1 y Telemercadeo:</strong> Agentes de voz y chat resuelven hasta el 60% de incidencias sin humanos.</li>
+                        <li><strong>Asistentes Jurídicos Junior:</strong> Revisión masiva de contratos y precedentes ejecutada en minutos.</li>
+                    </ul>`;
+            } else if (key === 'emergentes') {
+                content = `
+                    <h5 class="font-bold text-indigo-400 mb-2 text-sm">Empleos Emergentes (Nuevas Oportunidades)</h5>
+                    <p class="mb-3">Nuevas categorías profesionales necesarias para construir, gobernar y auditar la IA:</p>
+                    <ul class="space-y-2 list-disc list-inside text-slate-300">
+                        <li><strong>Ingenieros de Prompts e Contexto:</strong> Diseñadores de instrucciones estructuradas para modelos corporativos.</li>
+                        <li><strong>Auditores de Gobernanza y Ética de IA:</strong> Especialistas en mitigar sesgos, alucinaciones y asegurar GDPR/EU AI Act.</li>
+                        <li><strong>Arquitectos de RAG e Integración:</strong> Desarrolladores que conectan modelos con ERPs y CRMs de forma segura.</li>
+                    </ul>`;
+            } else if (key === 'habilidades') {
+                content = `
+                    <h5 class="font-bold text-amber-400 mb-2 text-sm">Matriz de Habilidades Clave (Perfil Híbrido)</h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                            <span class="font-bold text-teal-300 block mb-1">Hard Skills:</span>
+                            Alfabetización en IA (AI Literacy), pensamiento analítico de datos, ciberseguridad y prompt engineering.
+                        </div>
+                        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                            <span class="font-bold text-amber-300 block mb-1">Soft Skills:</span>
+                            Pensamiento crítico, criterio profesional, inteligencia emocional, liderazgo adaptativo y 'learnability'.
+                        </div>
+                    </div>`;
+            }
+            box.innerHTML = content;
+        }
+
+        // Didactic Switcher Logic
+        function switchDidactic(level) {
+            const btnLic = document.getElementById('btn-licenciatura');
+            const btnNin = document.getElementById('btn-ninos');
+
+            if (level === 'licenciatura') {
+                btnLic.className = 'px-4 py-2 rounded-lg bg-teal-600 text-white transition-all shadow-md font-bold';
+                btnNin.className = 'px-4 py-2 rounded-lg text-slate-400 hover:text-slate-200 transition-all';
+            } else {
+                btnNin.className = 'px-4 py-2 rounded-lg bg-teal-600 text-white transition-all shadow-md font-bold';
+                btnLic.className = 'px-4 py-2 rounded-lg text-slate-400 hover:text-slate-200 transition-all';
+            }
+            renderDidactic(level);
+        }
+
+        function renderDidactic(level) {
+            const container = document.getElementById('didacticContentArea');
+            if (level === 'licenciatura') {
+                container.innerHTML = `
+                    <div class="space-y-4 text-slate-200 text-xs sm:text-sm leading-relaxed">
+                        <div class="flex items-center space-x-2 text-teal-400 font-bold text-base font-heading">
+                            <i class="fa-solid fa-university"></i>
+                            <span>Explicación Académica de Nivel Licenciatura (CINE 6 UNESCO)</span>
+                        </div>
+                        <p>
+                            La educación superior, ubicada en el último tramo de la formación formal, constituye el espacio institucional destinado a la producción, sistematización y aplicación del conocimiento avanzado. La <strong class="text-teal-300">licenciatura (CINE 6)</strong> representa la titulación de primer ciclo orientada a la capacitación profesional y disciplinar.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                                <strong class="text-indigo-300 block mb-1">Especialización Disciplinar:</strong>
+                                Transición del conocimiento generalista hacia la adquisición de paradigmas, metodologías y axiomas teóricos específicos.
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                                <strong class="text-teal-300 block mb-1">Pensamiento Crítico y Rigor:</strong>
+                                Formación en el método científico para deconstruir problemas abstractos e investigar con fundamentación empírica.
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                                <strong class="text-amber-300 block mb-1">Capital Humano y Movilidad:</strong>
+                                Mecanismo institucional de acreditación de fe pública para el ejercicio profesional y desarrollo socioeconómico.
+                            </div>
+                        </div>
+                    </div>`;
+            } else {
+                container.innerHTML = `
+                    <div class="space-y-4 text-slate-200 text-xs sm:text-sm leading-relaxed">
+                        <div class="flex items-center space-x-2 text-amber-400 font-bold text-base font-heading">
+                            <i class="fa-solid fa-child-reaching"></i>
+                            <span>Explicación Adaptada para Niños de 10 Años (Técnica Feynman)</span>
+                        </div>
+                        <p class="text-base font-semibold text-teal-300">
+                            ¡Imagina que las empresas son como equipos de videojuegos y la Inteligencia Artificial (IA) es un superpoder nuevo!
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                                <div class="text-2xl">⚡</div>
+                                <strong class="text-amber-300 block">Súper Rápida:</strong>
+                                En vez de ordenar 10,000 papeles a mano durante meses, la IA lo hace en 2 segundos sin cansarse.
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                                <div class="text-2xl">🤖</div>
+                                <strong class="text-teal-300 block">Es un Asistente:</strong>
+                                No viene a quitarle el trabajo a los doctores o ingenieros, sino a ayudarlos a revisar fotos o escribir código fácil.
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                                <div class="text-2xl">🧠</div>
+                                <strong class="text-indigo-300 block">Lo que debes aprender tú:</strong>
+                                Aprende a hacer buenas preguntas, piensa por ti mismo y sé muy empático, ¡porque el cariño no lo copia ninguna computadora!
+                            </div>
+                        </div>
+                    </div>`;
+            }
+        }
+
+        // Render Prompts Log Grid
+        function renderPromptsGrid(data) {
+            const grid = document.getElementById('promptsGrid');
+            grid.innerHTML = data.map(p => `
+                <div class="p-5 rounded-2xl glass-card border border-slate-800 hover:border-teal-500/40 transition-all flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="px-2.5 py-1 rounded-md bg-slate-800 text-teal-300 font-mono font-bold">Prompt #${p.id}</span>
+                            <span class="px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 font-bold">${p.score} / 10</span>
+                        </div>
+                        <p class="text-xs text-slate-200 font-mono bg-slate-950 p-3 rounded-xl border border-slate-800/80 line-clamp-3 hover:line-clamp-none transition-all cursor-pointer" title="Haga clic para expandir">
+                            "${p.prompt}"
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+                        <div><strong class="text-slate-300">Asertividad:</strong> ${p.assertiveness}</div>
+                        <div><strong class="text-slate-300">Completitud:</strong> ${p.completeness}</div>
+                        <div class="pt-1"><span class="px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 font-semibold border border-indigo-800">${p.technique}</span></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterPrompts(cat) {
+            const buttons = document.querySelectorAll('.prompt-filter-btn');
+            buttons.forEach(btn => btn.className = 'prompt-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 transition-all');
+            event.target.className = 'prompt-filter-btn px-3 py-1.5 rounded-lg bg-teal-600 text-white transition-all';
+
+            if (cat === 'all') {
+                renderPromptsGrid(promptsData);
+            } else {
+                const filtered = promptsData.filter(p => p.category === cat);
+                renderPromptsGrid(filtered);
+            }
+        }
+
+        /* -------------------------------------------------------------
+         * REAL-TIME PROMPT EVALUATOR HEURISTIC ENGINE
+         * ------------------------------------------------------------- */
+        function evaluateUserPrompt() {
+            const input = document.getElementById('userPromptInput').value;
+            const charCount = input.length;
+            const wordCount = input.trim() === '' ? 0 : input.trim().split(/\s+/).length;
+
+            document.getElementById('charCountText').innerText = charCount;
+            document.getElementById('wordCountText').innerText = wordCount;
+
+            if (wordCount < 3) {
+                resetEvaluatorUI();
+                return;
+            }
+
+            let score = 0;
+            const suggestions = [];
+
+            // 1. Role / Persona Check
+            const roleKeywords = ['experto', 'actua como', 'hazte pasar', 'analista', 'profesor', 'consultor', 'desarrollador', 'rol', 'como un'];
+            const hasRole = roleKeywords.some(kw => input.toLowerCase().includes(kw));
+            if (hasRole) {
+                score += 2.5;
+                updateCheckUI('check-role', true, 'Detectado');
+            } else {
+                updateCheckUI('check-role', false, 'Falta Rol');
+                suggestions.push("Asigna un rol claro (ej. 'Hazte pasar por un experto en estrategia...').");
+            }
+
+            // 2. Context Check
+            const hasContext = wordCount >= 12;
+            if (hasContext) {
+                score += 2.5;
+                updateCheckUI('check-context', true, 'Suficiente');
+            } else {
+                updateCheckUI('check-context', false, 'Escaso');
+                suggestions.push("Añade más contexto situacional o empresarial a tu instrucción.");
+            }
+
+            // 3. Constraints / Anti-Hallucination
+            const constraintKeywords = ['sin inventar', 'realista', 'no uses', 'evita', 'exacto', 'limita', 'solo', 'formato', 'datos reales', 'comprobables'];
+            const hasConstraint = constraintKeywords.some(kw => input.toLowerCase().includes(kw));
+            if (hasConstraint) {
+                score += 2.5;
+                updateCheckUI('check-constraint', true, 'Presente');
+            } else {
+                updateCheckUI('check-constraint', false, 'Sin restricciones');
+                suggestions.push("Agrega restricciones explícitas anti-alucinación (ej. 'sin inventar datos').");
+            }
+
+            // 4. Output Format Instruction
+            const formatKeywords = ['tabla', 'resumen', 'lista', 'json', 'pasos', 'secciones', 'parrafos', 'pdf', 'apa', 'puntos'];
+            const hasFormat = formatKeywords.some(kw => input.toLowerCase().includes(kw));
+            if (hasFormat) {
+                score += 2.5;
+                updateCheckUI('check-format', true, 'Especificado');
+            } else {
+                updateCheckUI('check-format', false, 'Sin formato');
+                suggestions.push("Especifica la estructura de salida deseada (ej. 'en una tabla', 'en 3 puntos').");
+            }
+
+            // Score formatting
+            score = Math.min(10, score);
+            const scoreBadge = document.getElementById('scoreBadge');
+            const scoreLabel = document.getElementById('scoreLabel');
+
+            scoreBadge.innerText = score.toFixed(1) + ' / 10';
+
+            if (score >= 8.5) {
+                scoreBadge.className = 'text-2xl font-black font-heading text-emerald-400';
+                scoreLabel.innerText = 'Excelente / Sobresaliente';
+                scoreLabel.className = 'block text-[10px] uppercase font-bold text-emerald-400';
+            } else if (score >= 5.0) {
+                scoreBadge.className = 'text-2xl font-black font-heading text-amber-400';
+                scoreLabel.innerText = 'Regular / Mejorable';
+                scoreLabel.className = 'block text-[10px] uppercase font-bold text-amber-400';
+            } else {
+                scoreBadge.className = 'text-2xl font-black font-heading text-rose-400';
+                scoreLabel.innerText = 'Débil / Incompleto';
+                scoreLabel.className = 'block text-[10px] uppercase font-bold text-rose-400';
+            }
+
+            // Render suggestions
+            const suggList = document.getElementById('suggestionsList');
+            if (suggestions.length === 0) {
+                suggList.innerHTML = '<li class="text-emerald-400 font-semibold">¡Excelente prompt! Cumple con todas las mejores prácticas de la ingeniería instruccional.</li>';
+            } else {
+                suggList.innerHTML = suggestions.map(s => `<li>${s}</li>`).join('');
+            }
+        }
+
+        function updateCheckUI(elementId, success, text) {
+            const el = document.getElementById(elementId);
+            const tag = el.querySelector('.status-tag');
+            if (success) {
+                tag.innerText = text;
+                tag.className = 'font-bold text-emerald-400 status-tag';
+            } else {
+                tag.innerText = text;
+                tag.className = 'font-bold text-slate-500 status-tag';
+            }
+        }
+
+        function resetEvaluatorUI() {
+            document.getElementById('scoreBadge').innerText = '0.0 / 10';
+            document.getElementById('scoreBadge').className = 'text-2xl font-black font-heading text-teal-400';
+            document.getElementById('scoreLabel').innerText = 'Sin datos';
+            ['check-role', 'check-context', 'check-constraint', 'check-format'].forEach(id => {
+                updateCheckUI(id, false, 'No detectado');
+            });
+            document.getElementById('suggestionsList').innerHTML = '<li>Escribe una instrucción en el cuadro para comenzar la evaluación.</li>';
+        }
+
+        function loadSamplePrompt(type) {
+            const textarea = document.getElementById('userPromptInput');
+            if (type === 'high') {
+                textarea.value = "Hazte pasar por el mejor experto en IA y estrategia de negocios. Hazme una investigación súper profunda, sincera y realista sobre cómo la inteligencia artificial está transformando a las empresas hoy en día, sin inventar datos ni usar rollo teórico vacío. Entrega los resultados estructurados en secciones claras.";
+            } else {
+                textarea.value = "Dime cómo se usa la IA en las empresas.";
+            }
+            evaluateUserPrompt();
+        }
+
+        /* -------------------------------------------------------------
+         * BIBLIOGRAPHY RENDERER WITH COPY TO CLIPBOARD
+         * ------------------------------------------------------------- */
+        function renderBibliography() {
+            const container = document.getElementById('biblioContainer');
+            container.innerHTML = bibliografiaData.map((b, idx) => {
+                const citationText = `${b.autor} (${b.anio}). ${b.titulo}. ${b.fuente}.${b.url ? ' ' + b.url : ''}`;
+                return `
+                    <div class="p-4 rounded-xl glass-card border border-slate-800 flex flex-col justify-between space-y-3">
+                        <p class="text-xs text-slate-300 leading-relaxed font-serif">
+                            ${b.autor} (${b.anio}). <em>${b.titulo}</em>. ${b.fuente}.${b.url ? ` <a href="${b.url}" target="_blank" class="text-teal-400 underline">${b.url}</a>` : ''}
+                        </p>
+                        <div class="flex justify-end">
+                            <button onclick="copyCitation('${encodeURIComponent(citationText)}')" class="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-teal-300 text-[11px] border border-slate-700 transition-all flex items-center space-x-1">
+                                <i class="fa-regular fa-copy"></i>
+                                <span>Copiar Cita APA</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function copyCitation(textEncoded) {
+            const text = decodeURIComponent(textEncoded);
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            showToast("¡Cita en formato APA copiada al portapapeles!");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        // Global Search Logic
+        function handleGlobalSearch() {
+            const query = document.getElementById('globalSearchInput').value.toLowerCase();
+            if (query.length < 2) return;
+
+            // Highlight search matching cards or scroll into view
+            const cards = document.querySelectorAll('.sector-card, .glass-card');
+            cards.forEach(c => {
+                if (c.innerText.toLowerCase().includes(query)) {
+                    c.style.opacity = '1';
+                } else {
+                    c.style.opacity = '0.4';
+                }
+            });
+        }
+
+        /* -------------------------------------------------------------
+         * CHART.JS INITIALIZATION
+         * ------------------------------------------------------------- */
+        function initCharts() {
+            // Labor Doughnut Chart
+            const ctxLabor = document.getElementById('laborChart').getContext('2d');
+            new Chart(ctxLabor, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Alta Exposición (25%)', 'Exposición Media (45%)', 'Baja / Física (30%)'],
+                    datasets: [{
+                        data: [25, 45, 30],
+                        backgroundColor: ['#0D9488', '#6366F1', '#334155'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#94a3b8', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+
+            // Financial Bar Chart
+            const ctxFin = document.getElementById('financialChart').getContext('2d');
+            new Chart(ctxFin, {
+                type: 'bar',
+                data: {
+                    labels: ['Ahorro Soporte', 'Eficiencia Dev', 'Conversión Sales', 'Mantenimiento'],
+                    datasets: [{
+                        label: 'Impacto Promedio (%)',
+                        data: [50, 30, 15, 25],
+                        backgroundColor: ['#0D9488', '#6366F1', '#F59E0B', '#10B981'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
